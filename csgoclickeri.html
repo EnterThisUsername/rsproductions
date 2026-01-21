@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaseClicker - Ultimate CS:GO Case Opening Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="csgoclickeri.css">
+</head>
+<body>
+    <div id="splash-screen">
+        <div class="splash-logo">An RS Productions' Game</div>
+        <div class="splash-subtitle">CS:GO Case Clicker Ultimate</div>
+    </div>
+    
+    <div id="auth-screen">
+        <div class="auth-box">
+            <h2>CaseClicker</h2>
+            <div id="main-menu">
+                <button class="btn" onclick="showLoginPrompt()">Login</button>
+                <button class="btn btn-secondary" onclick="showCreatePrompt()">Create Account</button>
+            </div>
+            <div id="login-form" style="display: none;">
+                <div class="input-group">
+                    <label>Enter Your Code</label>
+                    <input type="text" id="login-code" placeholder="Paste your account code">
+                </div>
+                <button class="btn" onclick="loginAccount()">Login</button>
+                <button class="btn btn-secondary" onclick="showMainMenu()">Back</button>
+            </div>
+            <div id="register-form" style="display: none;">
+                <div class="input-group">
+                    <label>Choose Username</label>
+                    <input type="text" id="register-username" placeholder="Enter username">
+                </div>
+                <button class="btn" onclick="createAccount()">Create Account</button>
+                <button class="btn btn-secondary" onclick="showMainMenu()">Back</button>
+                <div class="account-code" id="new-account-code" style="display: none;">
+                    <div class="account-code-label">Your Account Code (SAVE THIS!):</div>
+                    <div class="account-code-value" id="account-code-display"></div>
+                    <button class="btn" style="margin-top: 1rem;" onclick="copyCode()">Copy Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <header>
+        <div class="logo">CaseClicker</div>
+        <div class="header-right">
+            <div class="wallet-display">
+                <div class="wallet-item">
+                    <div class="wallet-label">Balance</div>
+                    <div class="wallet-value" id="wallet">$0.00</div>
+                </div>
+                <div class="wallet-item">
+                    <div class="wallet-label">Inventory Value</div>
+                    <div class="wallet-value" id="inv-value">$0.00</div>
+                </div>
+                <div class="wallet-item">
+                    <div class="wallet-label">Items</div>
+                    <div class="wallet-value" id="inv-space">0/500</div>
+                </div>
+            </div>
+            <div class="user-badge" id="user-badge">Player</div>
+        </div>
+    </header>
+    
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('clicker')">Clicker</button>
+        <button class="nav-btn" onclick="switchTab('cases')">Cases</button>
+        <button class="nav-btn" onclick="switchTab('inventory')">Inventory</button>
+        <button class="nav-btn" onclick="switchTab('upgrades')">Upgrades</button>
+        <button class="nav-btn" onclick="switchTab('jackpot')">Jackpot</button>
+        <button class="nav-btn" onclick="switchTab('coinflip')">Coin Flip</button>
+        <button class="nav-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
+        <button class="nav-btn" onclick="switchTab('news')">News</button>
+        <button class="nav-btn" onclick="switchTab('settings')">Settings</button>
+    </nav>
+    
+    <div class="container" id="game-container" style="display: none;">
+        <div id="clicker-tab" class="tab-content active">
+            <div class="clicker-section">
+                <div class="money-display" id="money-display">$0.00</div>
+                <div class="clicker-stats">
+                    <span id="per-click">$0.50</span> per click | <span id="per-second">$0.00</span> per second
+                </div>
+                <div id="click-button" onclick="handleClick(event)">💰</div>
+                <div class="total-clicks">Total Clicks: <span id="total-clicks">0</span></div>
+            </div>
+            <h2 style="margin-bottom: 1.5rem; font-size: 2rem;">Quick Access</h2>
+            <div class="three-col-grid">
+                <div class="card" onclick="switchTab('cases')">
+                    <div class="card-header"><div class="card-title">📦 Cases</div></div>
+                    <div class="card-content">Open cases and get items</div>
+                </div>
+                <div class="card" onclick="switchTab('upgrades')">
+                    <div class="card-header"><div class="card-title">⬆️ Upgrades</div></div>
+                    <div class="card-content">Increase your passive income</div>
+                </div>
+                <div class="card" onclick="switchTab('inventory')">
+                    <div class="card-header"><div class="card-title">🎒 Inventory</div></div>
+                    <div class="card-content">View and sell your items</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="cases-tab" class="tab-content">
+            <h2 style="margin-bottom: 2rem; font-size: 2rem;">Cases</h2>
+            <div class="three-col-grid" id="cases-grid"></div>
+        </div>
+        
+        <div id="inventory-tab" class="tab-content">
+            <div class="inventory-header">
+                <div>
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Inventory</h2>
+                    <div class="wallet-value" id="inventory-total">$0.00</div>
+                </div>
+                <div class="inventory-filters">
+                    <button class="filter-btn active" onclick="filterInventory('all')">All</button>
+                    <button class="filter-btn" onclick="filterInventory('weapon')">Weapons</button>
+                    <button class="filter-btn" onclick="filterInventory('knife')">Knives</button>
+                    <button class="filter-btn" onclick="filterInventory('gloves')">Gloves</button>
+                    <button class="filter-btn" onclick="filterInventory('low')">Low</button>
+                    <button class="filter-btn" onclick="filterInventory('medium')">Medium</button>
+                    <button class="filter-btn" onclick="filterInventory('high')">High</button>
+                </div>
+            </div>
+            <div class="inventory-grid" id="inventory-grid"></div>
+        </div>
+        
+        <div id="upgrades-tab" class="tab-content">
+            <h2 style="margin-bottom: 2rem; font-size: 2rem;">Upgrades</h2>
+            <div class="three-col-grid" id="upgrades-container"></div>
+        </div>
+        
+        <div id="jackpot-tab" class="tab-content">
+            <div class="two-col-grid">
+                <div class="card">
+                    <h2 style="font-size: 2rem; margin-bottom: 1rem;">Jackpot</h2>
+                    <div style="font-size: 3rem; font-weight: 900; color: var(--accent); text-align: center; margin: 2rem 0;" id="jackpot-timer">60</div>
+                    <div style="height: 300px; background: var(--bg-dark); border-radius: 12px; margin: 2rem 0; display: flex; align-items: center; justify-content: center; font-size: 4rem;">🎰</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                        <div>
+                            <div style="color: var(--text-dim); font-size: 0.9rem;">Pot Value</div>
+                            <div style="color: var(--green); font-size: 1.5rem; font-weight: 700;" id="pot-value">$0.00</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-dim); font-size: 0.9rem;">Players</div>
+                            <div style="color: var(--blue); font-size: 1.5rem; font-weight: 700;" id="player-count">0</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-dim); font-size: 0.9rem;">Your Chance</div>
+                            <div style="color: var(--accent); font-size: 1.5rem; font-weight: 700;" id="your-chance">0%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">Enter Jackpot</h3>
+                    <div style="background: var(--bg-dark); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <p>Your Bet: <span style="color: var(--green); font-weight: 700;" id="player-bet-value">$0.00</span></p>
+                    </div>
+                    <input type="number" id="jackpot-bet-amount" placeholder="Amount to bet" style="width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 2px solid var(--border); color: var(--text); border-radius: 8px; margin-bottom: 1rem;">
+                    <button class="btn" onclick="enterJackpotWithMoney()" style="margin-bottom: 1rem;">Enter Jackpot</button>
+                    <h3 style="margin: 2rem 0 1rem;">Players</h3>
+                    <div style="max-height: 300px; overflow-y: auto;" id="players-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="coinflip-tab" class="tab-content">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">Coin Flip</h2>
+                <div style="width: 250px; height: 250px; margin: 2rem auto; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 5rem; box-shadow: 0 10px 40px var(--accent);" id="coin">🪙</div>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0; flex-wrap: wrap;">
+                    <input type="number" style="padding: 1rem; background: var(--bg-light); border: 2px solid var(--border); color: var(--text); border-radius: 8px; font-size: 1.1rem; width: 200px;" id="flip-amount" placeholder="Bet Amount">
+                    <button style="padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; background: var(--blue); color: white;" onclick="flipCoin('CT')">CT Side</button>
+                    <button style="padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; background: var(--accent); color: white;" onclick="flipCoin('T')">T Side</button>
+                </div>
+                <div style="text-align: center; font-size: 1.2rem; color: var(--text-dim);">Win Chance: 50% | Payout: 1.9x</div>
+            </div>
+        </div>
+        
+        <div id="leaderboard-tab" class="tab-content">
+            <div style="max-width: 900px; margin: 0 auto;">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">Leaderboard</h2>
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="color: var(--accent);">Top 20 Players</h3>
+                        <button class="btn" style="width: auto; padding: 0.5rem 1rem;" onclick="refreshLeaderboard()">Refresh</button>
+                    </div>
+                    <div id="leaderboard-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="news-tab" class="tab-content">
+            <div style="max-width: 900px; margin: 0 auto;">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">News & Updates</h2>
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <div class="card-title">Welcome to CaseClicker Ultimate!</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">January 2026</div>
+                    </div>
+                    <div class="card-content"><p>The ultimate CS:GO case opening experience! Click to earn money, open cases, build your inventory, and gamble your way to riches!</p></div>
+                </div>
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header"><div class="card-title">Features</div></div>
+                    <div class="card-content">
+                        <p>✓ Click to earn $0.50 per click<br>✓ 22 Cases to open<br>✓ 100+ Unique skins, knives, and gloves<br>✓ 28 Upgrades for passive income<br>✓ Working Jackpot gambling system<br>✓ Coin flip mini-game<br>✓ Account system with unique codes<br>✓ Top 20 Leaderboard<br>✓ Max 50 accounts<br>✓ 5 Color themes<br>✓ Auto-save every 30 seconds<br>✓ 500 inventory slots</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="settings-tab" class="tab-content">
+            <div class="settings-grid">
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Settings</h2>
+                <div class="setting-item">
+                    <span>Sound Effects</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this, 'sounds')"></div>
+                </div>
+                <div class="setting-item">
+                    <span>Animations</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this, 'animations')"></div>
+                </div>
+                <div class="setting-item">
+                    <span>Auto-Save</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this, 'autosave')"></div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">Theme</h3>
+                    <div class="theme-selector">
+                        <button class="theme-btn active" onclick="changeTheme('default', event)">Orange</button>
+                        <button class="theme-btn" onclick="changeTheme('blue', event)">Blue</button>
+                        <button class="theme-btn" onclick="changeTheme('green', event)">Green</button>
+                        <button class="theme-btn" onclick="changeTheme('purple', event)">Purple</button>
+                        <button class="theme-btn" onclick="changeTheme('red', event)">Red</button>
+                    </div>
+                </div>
+                <button class="btn" style="background: var(--red);" onclick="logout()">Logout</button>
+                <button class="btn" style="background: var(--red);" onclick="clearSave()">Clear Save Data</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="result-modal">
+        <div class="modal-content" style="max-width: 600px; text-align: center;">
+            <div class="modal-header">
+                <div class="modal-title">Case Opened!</div>
+                <button class="close-btn" onclick="closeResultModal()">Close</button>
+            </div>
+            <div style="padding: 2rem;">
+                <div id="result-icon" style="font-size: 6rem; margin-bottom: 1rem;">🔫</div>
+                <div id="result-name" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent);">Item Name</div>
+                <div id="result-wear" style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1rem;">Wear</div>
+                <div id="result-rarity" style="font-size: 1.2rem; margin-bottom: 1rem; padding: 0.5rem 1rem; border-radius: 8px; display: inline-block;">Rarity</div>
+                <div id="result-price" style="font-size: 2.5rem; font-weight: 900; color: var(--green); margin-top: 1rem;">$0.00</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="csgoclickeri.js"></script>
+</body>
+</html>
