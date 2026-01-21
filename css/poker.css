@@ -1,0 +1,456 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    overflow: hidden;
+}
+
+/* Loading Screen */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 0.5s;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-logo {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    background: linear-gradient(45deg, #f0a500, #ff6b35);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.loading-bar {
+    width: 300px;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.loading-progress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0a500, #ff6b35);
+    transition: width 0.3s;
+}
+
+/* Main Game Container */
+#game-container {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+/* Settings Button */
+.settings-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+    z-index: 100;
+}
+
+.settings-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+}
+
+/* Settings Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #1a1a2e;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.modal-header h2 {
+    font-size: 28px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.setting-group {
+    margin-bottom: 20px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.setting-group input, .setting-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 14px;
+}
+
+.setting-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, #f0a500, #ff6b35);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.save-btn:hover {
+    opacity: 0.9;
+}
+
+/* Poker Table */
+.poker-table {
+    width: 800px;
+    height: 400px;
+    background: #0a5f0a;
+    border: 15px solid #8b4513;
+    border-radius: 200px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+}
+
+/* Community Cards */
+.community-cards {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 10px;
+}
+
+.card {
+    width: 70px;
+    height: 100px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.card.red {
+    color: #d00;
+}
+
+.card.black {
+    color: #000;
+}
+
+.card.back {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: transparent;
+}
+
+.card .rank {
+    font-size: 20px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.card .suit {
+    font-size: 32px;
+}
+
+/* Player Positions */
+.player {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-info {
+    background: rgba(0,0,0,0.7);
+    padding: 10px 15px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 120px;
+}
+
+.player-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.player-chips {
+    color: #ffd700;
+    font-size: 14px;
+}
+
+.player-cards {
+    display: flex;
+    gap: 5px;
+}
+
+.player.active .player-info {
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+
+/* Position Player 0 (Human - Bottom) */
+#player-0 {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Position Players 1-5 (Bots) */
+#player-1 {
+    bottom: 120px;
+    left: 80px;
+}
+
+#player-2 {
+    top: 150px;
+    left: 30px;
+}
+
+#player-3 {
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#player-4 {
+    top: 150px;
+    right: 30px;
+}
+
+#player-5 {
+    bottom: 120px;
+    right: 80px;
+}
+
+/* Pot Display */
+.pot-display {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+/* Action Buttons */
+.action-buttons {
+    position: absolute;
+    bottom: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 50;
+}
+
+.action-btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn.fold {
+    background: #d00;
+    color: #fff;
+}
+
+.action-btn.call {
+    background: #0a0;
+    color: #fff;
+}
+
+.action-btn.raise {
+    background: #f0a500;
+    color: #fff;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Bet Slider */
+.bet-controls {
+    position: absolute;
+    bottom: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    padding: 15px;
+    border-radius: 10px;
+    display: none;
+    z-index: 60;
+}
+
+.bet-controls.active {
+    display: block;
+}
+
+.bet-slider {
+    width: 300px;
+    margin: 10px 0;
+}
+
+.bet-amount {
+    color: #ffd700;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Message Display */
+.message-display {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.9);
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 18px;
+    display: none;
+    z-index: 200;
+}
+
+.message-display.active {
+    display: block;
+}
+
+/* New Round Button */
+.new-round-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 40px;
+    background: linear-gradient(45deg, #f0a500, #ff6b35);
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    display: none;
+    z-index: 150;
+}
+
+.new-round-btn.active {
+    display: block;
+}
+
+.new-round-btn:hover {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.05);
+}
