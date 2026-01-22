@@ -3,268 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CaseClicker - Ultimate CS:GO Case Opening Simulator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/csgoclickeri.css">
+    <title>CS:GO Case Clicker - Ultimate Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="splash-screen">
-        <div class="splash-logo">An RS Productions' Game</div>
-        <div class="splash-subtitle">CS:GO Case Clicker Ultimate</div>
+    <!-- Animated Background -->
+    <div class="bg-container">
+        <div class="bg-gradient"></div>
+        <canvas id="particles"></canvas>
     </div>
-    
-    <div id="auth-screen">
-        <div class="auth-box">
-            <h2>CaseClicker</h2>
-            <div id="main-menu">
-                <button class="btn" onclick="showLoginPrompt()">Login</button>
-                <button class="btn btn-secondary" onclick="showCreatePrompt()">Create Account</button>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <div class="logo-icon">🎯</div>
+                <h1>CS:GO CASE CLICKER</h1>
             </div>
-            <div id="login-form" style="display: none;">
-                <div class="input-group">
-                    <label>Enter Your Code</label>
-                    <input type="text" id="login-code" placeholder="Paste your account code">
-                </div>
-                <button class="btn" onclick="loginAccount()">Login</button>
-                <button class="btn btn-secondary" onclick="showMainMenu()">Back</button>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
             </div>
-            <div id="register-form" style="display: none;">
-                <div class="input-group">
-                    <label>Choose Username</label>
-                    <input type="text" id="register-username" placeholder="Enter username">
-                </div>
-                <button class="btn" onclick="createAccount()">Create Account</button>
-                <button class="btn btn-secondary" onclick="showMainMenu()">Back</button>
-                <div class="account-code" id="new-account-code" style="display: none;">
-                    <div class="account-code-label">Your Account Code (SAVE THIS!):</div>
-                    <div class="account-code-value" id="account-code-display"></div>
-                    <button class="btn" style="margin-top: 1rem;" onclick="copyCode()">Copy Code</button>
-                </div>
-            </div>
+            <p class="loading-text">Loading cases...</p>
         </div>
     </div>
-    
-    <header>
-        <div class="logo">CaseClicker</div>
-        <div class="header-right">
-            <div class="wallet-display">
-                <div class="wallet-item">
-                    <div class="wallet-label">Balance</div>
-                    <div class="wallet-value" id="wallet">$0.00</div>
+
+    <!-- Main Game -->
+    <div id="game-screen" class="hidden">
+        <!-- Top Navigation Bar -->
+        <nav class="top-nav glass-effect">
+            <div class="nav-logo">
+                <div class="logo-icon">🎯</div>
+                <span>CASE CLICKER</span>
+            </div>
+            
+            <div class="nav-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Balance</span>
+                    <span class="stat-value" id="nav-balance">$0.00</span>
                 </div>
-                <div class="wallet-item">
-                    <div class="wallet-label">Inventory Value</div>
-                    <div class="wallet-value" id="inv-value">$0.00</div>
+                <div class="stat-item">
+                    <span class="stat-label">Inventory</span>
+                    <span class="stat-value" id="nav-inventory">$0.00</span>
                 </div>
-                <div class="wallet-item">
-                    <div class="wallet-label">Items</div>
-                    <div class="wallet-value" id="inv-space">0/500</div>
+                <div class="stat-item">
+                    <span class="stat-label">Level</span>
+                    <span class="stat-value" id="nav-level">1</span>
                 </div>
             </div>
-            <div class="user-badge" id="user-badge">Player</div>
-        </div>
-    </header>
-    
-    <nav>
-        <button class="nav-btn active" onclick="switchTab('clicker')">Clicker</button>
-        <button class="nav-btn" onclick="switchTab('cases')">Cases</button>
-        <button class="nav-btn" onclick="switchTab('inventory')">Inventory</button>
-        <button class="nav-btn" onclick="switchTab('upgrades')">Upgrades</button>
-        <button class="nav-btn" onclick="switchTab('jackpot')">Jackpot</button>
-        <button class="nav-btn" onclick="switchTab('coinflip')">Coin Flip</button>
-        <button class="nav-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
-        <button class="nav-btn" onclick="switchTab('news')">News</button>
-        <button class="nav-btn" onclick="switchTab('settings')">Settings</button>
-    </nav>
-    
-    <div class="container" id="game-container" style="display: none;">
-        <div id="clicker-tab" class="tab-content active">
-            <div class="clicker-section">
-                <div class="money-display" id="money-display">$0.00</div>
-                <div class="clicker-stats">
-                    <span id="per-click">$0.50</span> per click | <span id="per-second">$0.00</span> per second
-                </div>
-                <div id="click-button" onclick="handleClick(event)">💰</div>
-                <div class="total-clicks">Total Clicks: <span id="total-clicks">0</span></div>
+
+            <div class="nav-user">
+                <div class="user-avatar">👤</div>
+                <span id="nav-username">Player</span>
             </div>
-            <h2 style="margin-bottom: 1.5rem; font-size: 2rem;">Quick Access</h2>
-            <div class="three-col-grid">
-                <div class="card" onclick="switchTab('cases')">
-                    <div class="card-header"><div class="card-title">📦 Cases</div></div>
-                    <div class="card-content">Open real CS:GO cases</div>
-                </div>
-                <div class="card" onclick="switchTab('upgrades')">
-                    <div class="card-header"><div class="card-title">⬆️ Upgrades</div></div>
-                    <div class="card-content">Increase your passive income</div>
-                </div>
-                <div class="card" onclick="switchTab('inventory')">
-                    <div class="card-header"><div class="card-title">🎒 Inventory</div></div>
-                    <div class="card-content">View and sell your items</div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="cases-tab" class="tab-content">
-            <h2 style="margin-bottom: 2rem; font-size: 2rem;">Real CS:GO/CS2 Cases</h2>
-            <div class="three-col-grid" id="cases-grid"></div>
-        </div>
-        
-        <div id="inventory-tab" class="tab-content">
-            <div class="inventory-header">
-                <div>
-                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Inventory</h2>
-                    <div class="wallet-value" id="inventory-total">$0.00</div>
-                </div>
-                <div class="inventory-filters">
-                    <button class="filter-btn active" onclick="filterInventory('all')">All</button>
-                    <button class="filter-btn" onclick="filterInventory('weapon')">Weapons</button>
-                    <button class="filter-btn" onclick="filterInventory('knife')">Knives</button>
-                    <button class="filter-btn" onclick="filterInventory('gloves')">Gloves</button>
-                    <button class="filter-btn" onclick="filterInventory('low')">Low</button>
-                    <button class="filter-btn" onclick="filterInventory('medium')">Medium</button>
-                    <button class="filter-btn" onclick="filterInventory('high')">High</button>
-                </div>
-            </div>
-            <div class="inventory-grid" id="inventory-grid"></div>
-        </div>
-        
-        <div id="upgrades-tab" class="tab-content">
-            <h2 style="margin-bottom: 2rem; font-size: 2rem;">Upgrades</h2>
-            <div class="three-col-grid" id="upgrades-container"></div>
-        </div>
-        
-        <div id="jackpot-tab" class="tab-content">
-            <div class="two-col-grid">
-                <div class="card">
-                    <h2 style="font-size: 2rem; margin-bottom: 1rem;">Jackpot</h2>
-                    <div style="font-size: 3rem; font-weight: 900; color: var(--accent); text-align: center; margin: 2rem 0;" id="jackpot-timer">60</div>
-                    <div style="height: 300px; background: var(--bg-dark); border-radius: 12px; margin: 2rem 0; display: flex; align-items: center; justify-content: center; font-size: 4rem;">🎰</div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
-                        <div>
-                            <div style="color: var(--text-dim); font-size: 0.9rem;">Pot Value</div>
-                            <div style="color: var(--green); font-size: 1.5rem; font-weight: 700;" id="pot-value">$0.00</div>
+        </nav>
+
+        <!-- Side Navigation -->
+        <aside class="side-nav glass-effect">
+            <button class="nav-btn active" data-tab="home" onclick="switchTab('home')">
+                <i>🏠</i>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" data-tab="cases" onclick="switchTab('cases')">
+                <i>📦</i>
+                <span>Cases</span>
+            </button>
+            <button class="nav-btn" data-tab="inventory" onclick="switchTab('inventory')">
+                <i>🎒</i>
+                <span>Inventory</span>
+            </button>
+            <button class="nav-btn" data-tab="upgrades" onclick="switchTab('upgrades')">
+                <i>⬆️</i>
+                <span>Upgrades</span>
+            </button>
+            <button class="nav-btn" data-tab="jackpot" onclick="switchTab('jackpot')">
+                <i>🎰</i>
+                <span>Jackpot</span>
+            </button>
+            <button class="nav-btn" data-tab="coinflip" onclick="switchTab('coinflip')">
+                <i>🪙</i>
+                <span>Coinflip</span>
+            </button>
+            <button class="nav-btn" data-tab="trade" onclick="switchTab('trade')">
+                <i>🔄</i>
+                <span>Trade</span>
+            </button>
+            <button class="nav-btn" data-tab="achievements" onclick="switchTab('achievements')">
+                <i>🏆</i>
+                <span>Achievements</span>
+            </button>
+            <button class="nav-btn" data-tab="leaderboard" onclick="switchTab('leaderboard')">
+                <i>📊</i>
+                <span>Leaderboard</span>
+            </button>
+            <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')">
+                <i>⚙️</i>
+                <span>Settings</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Tab -->
+            <div id="tab-home" class="tab-content active">
+                <div class="welcome-section">
+                    <h1 class="page-title">Welcome Back, <span id="welcome-username">Player</span>!</h1>
+                    <div class="daily-reward glass-effect" id="daily-reward">
+                        <div class="reward-icon">🎁</div>
+                        <div class="reward-info">
+                            <h3>Daily Reward Available!</h3>
+                            <p>Click to claim your reward</p>
                         </div>
-                        <div>
-                            <div style="color: var(--text-dim); font-size: 0.9rem;">Players</div>
-                            <div style="color: var(--blue); font-size: 1.5rem; font-weight: 700;" id="player-count">0</div>
+                        <button class="btn btn-primary" onclick="claimDailyReward()">Claim</button>
+                    </div>
+                </div>
+
+                <div class="clicker-section glass-effect">
+                    <div class="clicker-stats">
+                        <div class="stat-box">
+                            <span class="stat-amount" id="money-display">$0.00</span>
+                            <span class="stat-subtitle">Your Balance</span>
                         </div>
-                        <div>
-                            <div style="color: var(--text-dim); font-size: 0.9rem;">Your Chance</div>
-                            <div style="color: var(--accent); font-size: 1.5rem; font-weight: 700;" id="your-chance">0%</div>
+                        <div class="stat-box">
+                            <span class="stat-amount" id="per-click">$0.50</span>
+                            <span class="stat-subtitle">Per Click</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-amount" id="per-second">$0.00</span>
+                            <span class="stat-subtitle">Per Second</span>
                         </div>
                     </div>
-                </div>
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem;">Enter Jackpot</h3>
-                    <div style="background: var(--bg-dark); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                        <p>Your Bet: <span style="color: var(--green); font-weight: 700;" id="player-bet-value">$0.00</span></p>
+
+                    <div class="click-area">
+                        <div id="click-button" class="click-button">
+                            <div class="click-pulse"></div>
+                            <span class="click-icon">💰</span>
+                        </div>
                     </div>
-                    <input type="number" id="jackpot-bet-amount" placeholder="Amount to bet" style="width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 2px solid var(--border); color: var(--text); border-radius: 8px; margin-bottom: 1rem;">
-                    <button class="btn" onclick="enterJackpotWithMoney()" style="margin-bottom: 1rem;">Enter Jackpot</button>
-                    <h3 style="margin: 2rem 0 1rem;">Players</h3>
-                    <div style="max-height: 300px; overflow-y: auto;" id="players-list"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="coinflip-tab" class="tab-content">
-            <div style="max-width: 800px; margin: 0 auto;">
-                <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">Coin Flip</h2>
-                <div style="width: 250px; height: 250px; margin: 2rem auto; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 5rem; box-shadow: 0 10px 40px var(--accent);" id="coin">🪙</div>
-                <div style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0; flex-wrap: wrap;">
-                    <input type="number" style="padding: 1rem; background: var(--bg-light); border: 2px solid var(--border); color: var(--text); border-radius: 8px; font-size: 1.1rem; width: 200px;" id="flip-amount" placeholder="Bet Amount">
-                    <button style="padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; background: var(--blue); color: white;" onclick="flipCoin('CT')">CT Side</button>
-                    <button style="padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; background: var(--accent); color: white;" onclick="flipCoin('T')">T Side</button>
-                </div>
-                <div style="text-align: center; font-size: 1.2rem; color: var(--text-dim);">Win Chance: 50% | Payout: 1.9x</div>
-            </div>
-        </div>
-        
-        <div id="leaderboard-tab" class="tab-content">
-            <div style="max-width: 900px; margin: 0 auto;">
-                <h2 style="font-size: 2rem; margin-bottom: 2rem;">Leaderboard</h2>
-                <div class="card" style="margin-bottom: 2rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3 style="color: var(--accent);">Top 20 Players</h3>
-                        <button class="btn" style="width: auto; padding: 0.5rem 1rem;" onclick="refreshLeaderboard()">Refresh</button>
-                    </div>
-                    <div id="leaderboard-list"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="news-tab" class="tab-content">
-            <div style="max-width: 900px; margin: 0 auto;">
-                <h2 style="font-size: 2rem; margin-bottom: 2rem;">News & Updates</h2>
-                <div class="card" style="margin-bottom: 1.5rem;">
-                    <div class="card-header">
-                        <div class="card-title">Welcome to CaseClicker Ultimate!</div>
-                        <div style="color: var(--text-dim); font-size: 0.9rem;">January 2026</div>
-                    </div>
-                    <div class="card-content"><p>The ultimate CS:GO case opening experience with REAL cases! Click to earn money, open authentic CS:GO/CS2 cases, build your inventory, and gamble your way to riches!</p></div>
-                </div>
-                <div class="card" style="margin-bottom: 1.5rem;">
-                    <div class="card-header"><div class="card-title">NEW: Real CS:GO Cases!</div></div>
-                    <div class="card-content">
-                        <p>✓ 22 authentic CS:GO/CS2 cases with real names and prices<br>✓ Kilowatt Case with Kukri Knife ($2.65)<br>✓ Revolution Case ($2.84)<br>✓ Dreams & Nightmares Case ($4.02)<br>✓ Operation cases: Riptide ($17.51), Broken Fang ($11.42), Hydra ($22.05)<br>✓ Legendary CS:GO Weapon Case ($85.50)<br>✓ Real skins: AK-47 Inheritance, AWP Chrome Cannon, M4A4 Temukau, etc.<br>✓ Authentic knives: Kukri, Butterfly, Karambit, Falchion<br>✓ Special gloves from actual cases</p>
+
+                    <div class="click-info">
+                        <p>Total Clicks: <span id="total-clicks">0</span></p>
                     </div>
                 </div>
-                <div class="card" style="margin-bottom: 1.5rem;">
-                    <div class="card-header"><div class="card-title">Features</div></div>
-                    <div class="card-content">
-                        <p>✓ Click to earn $0.50 per click<br>✓ 100+ authentic CS:GO skins<br>✓ 28 Upgrades for passive income<br>✓ Working Jackpot gambling system<br>✓ Coin flip mini-game<br>✓ Account system with unique codes<br>✓ Top 20 Leaderboard<br>✓ Max 50 accounts<br>✓ 5 Color themes<br>✓ Auto-save every 30 seconds<br>✓ 500 inventory slots</p>
+
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="action-grid">
+                        <div class="action-card glass-effect" onclick="switchTab('cases')">
+                            <i>📦</i>
+                            <h3>Open Cases</h3>
+                            <p>22 cases available</p>
+                        </div>
+                        <div class="action-card glass-effect" onclick="switchTab('upgrades')">
+                            <i>⬆️</i>
+                            <h3>Buy Upgrades</h3>
+                            <p>Boost your income</p>
+                        </div>
+                        <div class="action-card glass-effect" onclick="switchTab('jackpot')">
+                            <i>🎰</i>
+                            <h3>Jackpot</h3>
+                            <p>Win big prizes</p>
+                        </div>
+                        <div class="action-card glass-effect" onclick="switchTab('trade')">
+                            <i>🔄</i>
+                            <h3>Trade Up</h3>
+                            <p>Contract items</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div id="settings-tab" class="tab-content">
-            <div class="settings-grid">
-                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Settings</h2>
-                <div class="setting-item">
-                    <span>Sound Effects</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this, 'sounds')"></div>
+
+            <!-- Cases Tab -->
+            <div id="tab-cases" class="tab-content">
+                <h1 class="page-title">Case Opening</h1>
+                
+                <div class="filter-bar glass-effect">
+                    <button class="filter-btn active" data-filter="all">All Cases</button>
+                    <button class="filter-btn" data-filter="cheap">Budget ($0-$5)</button>
+                    <button class="filter-btn" data-filter="mid">Standard ($5-$10)</button>
+                    <button class="filter-btn" data-filter="expensive">Premium ($10+)</button>
                 </div>
-                <div class="setting-item">
-                    <span>Animations</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this, 'animations')"></div>
-                </div>
-                <div class="setting-item">
-                    <span>Auto-Save</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this, 'autosave')"></div>
-                </div>
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem;">Theme</h3>
-                    <div class="theme-selector">
-                        <button class="theme-btn active" onclick="changeTheme('default', event)">Orange</button>
-                        <button class="theme-btn" onclick="changeTheme('blue', event)">Blue</button>
-                        <button class="theme-btn" onclick="changeTheme('green', event)">Green</button>
-                        <button class="theme-btn" onclick="changeTheme('purple', event)">Purple</button>
-                        <button class="theme-btn" onclick="changeTheme('red', event)">Red</button>
+
+                <div class="cases-grid" id="cases-grid"></div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div id="tab-inventory" class="tab-content">
+                <div class="inventory-header">
+                    <h1 class="page-title">Inventory</h1>
+                    <div class="inventory-stats glass-effect">
+                        <div class="inv-stat">
+                            <span class="inv-label">Total Value</span>
+                            <span class="inv-value" id="inv-total-value">$0.00</span>
+                        </div>
+                        <div class="inv-stat">
+                            <span class="inv-label">Items</span>
+                            <span class="inv-value" id="inv-item-count">0/500</span>
+                        </div>
+                        <button class="btn btn-danger" onclick="sellAllItems()">Sell All</button>
                     </div>
                 </div>
-                <button class="btn" style="background: var(--red);" onclick="logout()">Logout</button>
-                <button class="btn" style="background: var(--red);" onclick="clearSave()">Clear Save Data</button>
+
+                <div class="filter-bar glass-effect">
+                    <button class="filter-btn active" data-inv-filter="all">All</button>
+                    <button class="filter-btn" data-inv-filter="weapon">Weapons</button>
+                    <button class="filter-btn" data-inv-filter="knife">Knives</button>
+                    <button class="filter-btn" data-inv-filter="gloves">Gloves</button>
+                    <button class="filter-btn" data-inv-filter="high">High Value</button>
+                </div>
+
+                <div class="inventory-grid" id="inventory-grid"></div>
+            </div>
+
+            <!-- Upgrades Tab -->
+            <div id="tab-upgrades" class="tab-content">
+                <h1 class="page-title">Upgrades</h1>
+                <p class="page-subtitle">Increase your passive income</p>
+                <div class="upgrades-grid" id="upgrades-grid"></div>
+            </div>
+
+            <!-- Jackpot Tab -->
+            <div id="tab-jackpot" class="tab-content">
+                <h1 class="page-title">Jackpot</h1>
+                <div class="jackpot-container">
+                    <div class="jackpot-main glass-effect">
+                        <div class="jackpot-timer" id="jackpot-timer">60</div>
+                        <div class="jackpot-display">
+                            <div class="jackpot-icon">🎰</div>
+                        </div>
+                        <div class="jackpot-stats">
+                            <div class="jp-stat">
+                                <span class="jp-label">Pot Value</span>
+                                <span class="jp-value" id="jp-pot">$0.00</span>
+                            </div>
+                            <div class="jp-stat">
+                                <span class="jp-label">Players</span>
+                                <span class="jp-value" id="jp-players">0</span>
+                            </div>
+                            <div class="jp-stat">
+                                <span class="jp-label">Your Chance</span>
+                                <span class="jp-value" id="jp-chance">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="jackpot-enter glass-effect">
+                        <h3>Enter Jackpot</h3>
+                        <input type="number" id="jp-bet-amount" placeholder="Enter amount" class="auth-input">
+                        <button class="btn btn-primary" onclick="enterJackpot()">Enter Jackpot</button>
+                        <div class="jackpot-players" id="jp-players-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coinflip Tab -->
+            <div id="tab-coinflip" class="tab-content">
+                <h1 class="page-title">Coinflip</h1>
+                <div class="coinflip-container glass-effect">
+                    <div class="coin" id="coin">
+                        <div class="coin-front">CT</div>
+                        <div class="coin-back">T</div>
+                    </div>
+                    <div class="coinflip-controls">
+                        <input type="number" id="flip-amount" placeholder="Bet amount" class="auth-input">
+                        <div class="flip-buttons">
+                            <button class="btn btn-ct" onclick="flipCoin('CT')">CT Side</button>
+                            <button class="btn btn-t" onclick="flipCoin('T')">T Side</button>
+                        </div>
+                        <p class="flip-info">Win Chance: 50% | Payout: 1.95x</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trade Tab -->
+            <div id="tab-trade" class="tab-content">
+                <h1 class="page-title">Trade Up Contract</h1>
+                <p class="page-subtitle">Trade 10 items of the same rarity for 1 item of higher rarity</p>
+                
+                <div class="trade-container">
+                    <div class="trade-input glass-effect">
+                        <h3>Select Items (0/10)</h3>
+                        <div class="trade-slots" id="trade-slots"></div>
+                        <button class="btn btn-primary" onclick="executeTradeUp()" id="trade-btn" disabled>Execute Trade Up</button>
+                    </div>
+                    <div class="trade-result glass-effect">
+                        <h3>Your Inventory</h3>
+                        <div class="trade-inventory" id="trade-inventory"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Tab -->
+            <div id="tab-achievements" class="tab-content">
+                <h1 class="page-title">Achievements</h1>
+                <div class="achievements-grid" id="achievements-grid"></div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div id="tab-leaderboard" class="tab-content">
+                <h1 class="page-title">Leaderboard</h1>
+                <div class="leaderboard-container glass-effect">
+                    <button class="btn btn-secondary" onclick="refreshLeaderboard()">Refresh</button>
+                    <div class="leaderboard-list" id="leaderboard-list"></div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="tab-settings" class="tab-content">
+                <h1 class="page-title">Settings</h1>
+                <div class="settings-container">
+                    <div class="setting-card glass-effect">
+                        <div class="setting-item">
+                            <span>Sound Effects</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-sound" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Animations</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-animations" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Auto-Save</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-autosave" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Particles</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-particles" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-card glass-effect">
+                        <h3>Theme</h3>
+                        <div class="theme-grid">
+                            <button class="theme-btn active" data-theme="orange" onclick="changeTheme('orange')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #ff6b00, #ff8533);"></div>
+                                <span>Orange</span>
+                            </button>
+                            <button class="theme-btn" data-theme="blue" onclick="changeTheme('blue')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #2196f3, #42a5f5);"></div>
+                                <span>Blue</span>
+                            </button>
+                            <button class="theme-btn" data-theme="green" onclick="changeTheme('green')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #4caf50, #66bb6a);"></div>
+                                <span>Green</span>
+                            </button>
+                            <button class="theme-btn" data-theme="purple" onclick="changeTheme('purple')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #9c27b0, #ab47bc);"></div>
+                                <span>Purple</span>
+                            </button>
+                            <button class="theme-btn" data-theme="red" onclick="changeTheme('red')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #f44336, #ef5350);"></div>
+                                <span>Red</span>
+                            </button>
+                            <button class="theme-btn" data-theme="cyan" onclick="changeTheme('cyan')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #00bcd4, #26c6da);"></div>
+                                <span>Cyan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="setting-card glass-effect">
+                        <h3>Data Management</h3>
+                        <button class="btn btn-secondary" onclick="exportSave()">Export Save</button>
+                        <button class="btn btn-secondary" onclick="importSave()">Import Save</button>
+                        <button class="btn btn-danger" onclick="resetProgress()">Reset All Progress</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Case Opening Modal -->
+    <div id="case-opening-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeCaseModal()"></div>
+        <div class="modal-content case-modal glass-effect">
+            <button class="modal-close" onclick="closeCaseModal()">✕</button>
+            <div class="case-opening-animation">
+                <div class="reel-container">
+                    <div class="reel" id="case-reel"></div>
+                    <div class="reel-indicator"></div>
+                </div>
+            </div>
+            <div class="case-result hidden" id="case-result">
+                <div class="result-icon" id="result-icon">🔫</div>
+                <h2 id="result-name">Item Name</h2>
+                <p id="result-wear">Factory New</p>
+                <div class="result-rarity" id="result-rarity">Covert</div>
+                <div class="result-price" id="result-price">$0.00</div>
+                <button class="btn btn-primary" onclick="closeCaseModal()">Continue</button>
             </div>
         </div>
     </div>
-    
-    <div class="modal" id="result-modal">
-        <div class="modal-content" style="max-width: 600px; text-align: center;">
-            <div class="modal-header">
-                <div class="modal-title">Case Opened!</div>
-                <button class="close-btn" onclick="closeResultModal()">Close</button>
-            </div>
-            <div style="padding: 2rem;">
-                <div id="result-icon" style="font-size: 6rem; margin-bottom: 1rem;">🔫</div>
-                <div id="result-name" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent);">Item Name</div>
-                <div id="result-wear" style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1rem;">Wear</div>
-                <div id="result-rarity" style="font-size: 1.2rem; margin-bottom: 1rem; padding: 0.5rem 1rem; border-radius: 8px; display: inline-block;">Rarity</div>
-                <div id="result-price" style="font-size: 2.5rem; font-weight: 900; color: var(--green); margin-top: 1rem;">$0.00</div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="js/csgoclickeri.js"></script>
+
+    <!-- Notification Container -->
+    <div id="notifications"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
