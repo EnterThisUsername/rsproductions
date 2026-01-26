@@ -1,0 +1,24 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #111;
+    font-family: Arial, sans-serif;
+}
+
+.redirect-btn {
+    padding: 15px 30px;
+    background-color: #4a90e2;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.redirect-btn:hover {
+    background-color: #357abd;
+    transform: scale(1.05);
+}
