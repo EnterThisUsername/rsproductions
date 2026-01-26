@@ -1,1 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS:GO Case Clicker - Ultimate Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-container">
+        <div class="bg-gradient"></div>
+        <canvas id="particles"></canvas>
+    </div>
 
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <div class="logo-icon">🎯</div>
+                <h1>CS:GO CASE CLICKER</h1>
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Loading cases...</p>
+        </div>
+    </div>
+
+    <!-- Main Game -->
+    <div id="game-screen">
+        <!-- Top Navigation Bar -->
+        <nav class="top-nav glass-effect">
+            <div class="nav-logo">
+                <div class="logo-icon">🎯</div>
+                <span>CASE CLICKER</span>
+            </div>
+            
+            <div class="nav-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Balance</span>
+                    <span class="stat-value" id="nav-balance">$0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Inventory</span>
+                    <span class="stat-value" id="nav-inventory">$0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Level</span>
+                    <span class="stat-value" id="nav-level">1</span>
+                </div>
+            </div>
+
+            <div class="nav-user">
+                <div class="user-avatar">👤</div>
+                <span id="nav-username">Player</span>
+            </div>
+        </nav>
+
+        <!-- Side Navigation -->
+        <aside class="side-nav glass-effect">
+            <button class="nav-btn active" data-tab="home" onclick="switchTab('home')">
+                <i>🏠</i>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" data-tab="cases" onclick="switchTab('cases')">
+                <i>📦</i>
+                <span>Cases</span>
+            </button>
+            <button class="nav-btn" data-tab="inventory" onclick="switchTab('inventory')">
+                <i>🎒</i>
+                <span>Inventory</span>
+            </button>
+            <button class="nav-btn" data-tab="upgrades" onclick="switchTab('upgrades')">
+                <i>⬆️</i>
+                <span>Upgrades</span>
+            </button>
+            <button class="nav-btn" data-tab="jackpot" onclick="switchTab('jackpot')">
+                <i>🎰</i>
+                <span>Jackpot</span>
+            </button>
+            <button class="nav-btn" data-tab="coinflip" onclick="switchTab('coinflip')">
+                <i>🪙</i>
+                <span>Coinflip</span>
+            </button>
+            <button class="nav-btn" data-tab="trade" onclick="switchTab('trade')">
+                <i>🔄</i>
+                <span>Trade</span>
+            </button>
+            <button class="nav-btn" data-tab="achievements" onclick="switchTab('achievements')">
+                <i>🏆</i>
+                <span>Achievements</span>
+            </button>
+            <button class="nav-btn" data-tab="leaderboard" onclick="switchTab('leaderboard')">
+                <i>📊</i>
+                <span>Leaderboard</span>
+            </button>
+            <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')">
+                <i>⚙️</i>
+                <span>Settings</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Tab -->
+            <div id="tab-home" class="tab-content active">
+                <div class="welcome-section">
+                    <h1 class="page-title">Welcome Back, <span id="welcome-username">Player</span>!</h1>
+                    <div class="daily-reward glass-effect" id="daily-reward">
+                        <div class="reward-icon">🎁</div>
+                        <div class="reward-info">
+                            <h3>Daily Reward Available!</h3>
+                            <p>Click to claim your reward</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="claimDailyReward()">Claim</button>
+                    </div>
+                </div>
+
+                <div class="clicker-section glass-effect">
+                    <div class="clicker-stats">
+                        <div class="stat-box">
+                            <span class="stat-amount" id="money-display">$0.00</span>
+                            <span class="stat-subtitle">Your Balance</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-amount" id="per-click">$0.50</span>
+                            <span class="stat-subtitle">Per Click</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-amount" id="per-second">$0.00</span>
+                            <span class="stat-subtitle">Per Second</span>
+                        </div>
+                    </div>
+
+                    <div class="click-area">
+                        <div id="click-button" class="click-button">
+                            <div class="click-pulse"></div>
+                            <span class="click-icon">💰</span>
+                        </div>
+                    </div>
+
+                    <div class="click-info">
+                        <p>Total Clicks: <span id="total-clicks">0</span></p>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="action-grid">
+                        <div class="action-card glass-effect" onclick="switchTab('cases')">
+                            <i>📦</i>
+                            <h3>Open Cases</h3>
+                            <p>22 cases available</p>
+                        </div>
+                        <div class="action-card glass-effect" onclick="switchTab('upgrades')">
+                            <i>⬆️</i>
+                            <h3>Buy Upgrades</h3>
+                            <p>Boost your income</p>
+                        </div>
+                        <div class="action-card glass-effect" onclick="switchTab('jackpot')">
+                            <i>🎰</i>
+                            <h3>Jackpot</h3>
+                            <p>Win big prizes</p>
+                        </div>
+                        <div class="action-card glass-effect" onclick="switchTab('trade')">
+                            <i>🔄</i>
+                            <h3>Trade Up</h3>
+                            <p>Contract items</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cases Tab -->
+            <div id="tab-cases" class="tab-content">
+                <h1 class="page-title">Case Opening</h1>
+                
+                <div class="filter-bar glass-effect">
+                    <button class="filter-btn active" data-filter="all">All Cases</button>
+                    <button class="filter-btn" data-filter="cheap">Budget ($0-$5)</button>
+                    <button class="filter-btn" data-filter="mid">Standard ($5-$15)</button>
+                    <button class="filter-btn" data-filter="expensive">Premium ($15+)</button>
+                    <button class="filter-btn" data-filter="ultra">ULTRA RARE ($80+)</button>
+                </div>
+
+                <div class="glass-effect" style="padding: 1.5rem; margin-bottom: 2rem; border-radius: 15px;">
+                    <h3 style="margin-bottom: 1rem;">🤖 Auto Case Opener</h3>
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <select id="auto-open-case-select" style="padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--glass-border); color: var(--text); border-radius: 8px; flex: 1; min-width: 200px;" onchange="gameState.settings.autoOpenCaseId = parseInt(this.value); saveGame();">
+                            <option value="1">Kilowatt Case ($2.65)</option>
+                            <option value="2">Revolution Case ($2.84)</option>
+                            <option value="3">Dreams & Nightmares ($4.02)</option>
+                            <option value="4">Phoenix Case ($4.50)</option>
+                            <option value="5">Spectrum Case ($6.81)</option>
+                            <option value="6">Glove Case ($8.50)</option>
+                            <option value="7">Shattered Web ($9.39)</option>
+                            <option value="8">Broken Fang ($11.42)</option>
+                            <option value="9">Riptide ($17.51)</option>
+                            <option value="10">Hydra ($22.05)</option>
+                            <option value="11">Weapon Case ($85.50)</option>
+                            <option value="12">Bravo Case ($150.00)</option>
+                        </select>
+                        <button class="btn btn-success" id="auto-open-toggle" onclick="toggleAutoOpen()">Start Auto-Open</button>
+                    </div>
+                    <p style="color: var(--text-dim); margin-top: 0.75rem; font-size: 0.9rem;">Opens 1 case per second automatically. Make sure you have enough money!</p>
+                </div>
+
+                <div class="cases-grid" id="cases-grid"></div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div id="tab-inventory" class="tab-content">
+                <div class="inventory-header">
+                    <h1 class="page-title">Inventory</h1>
+                    <div class="inventory-stats glass-effect">
+                        <div class="inv-stat">
+                            <span class="inv-label">Total Value</span>
+                            <span class="inv-value" id="inv-total-value">$0.00</span>
+                        </div>
+                        <div class="inv-stat">
+                            <span class="inv-label">Items</span>
+                            <span class="inv-value" id="inv-item-count">0/500</span>
+                        </div>
+                        <button class="btn btn-danger" onclick="sellAllItems()">Sell All</button>
+                    </div>
+                </div>
+
+                <div class="filter-bar glass-effect">
+                    <button class="filter-btn active" data-inv-filter="all">All</button>
+                    <button class="filter-btn" data-inv-filter="weapon">Weapons</button>
+                    <button class="filter-btn" data-inv-filter="knife">Knives</button>
+                    <button class="filter-btn" data-inv-filter="gloves">Gloves</button>
+                    <button class="filter-btn" data-inv-filter="high">High Value</button>
+                </div>
+
+                <div class="inventory-grid" id="inventory-grid"></div>
+            </div>
+
+            <!-- Upgrades Tab -->
+            <div id="tab-upgrades" class="tab-content">
+                <h1 class="page-title">Upgrades</h1>
+                <p class="page-subtitle">Increase your passive income</p>
+                <div class="upgrades-grid" id="upgrades-grid"></div>
+            </div>
+
+            <!-- Jackpot Tab -->
+            <div id="tab-jackpot" class="tab-content">
+                <h1 class="page-title">Jackpot</h1>
+                <div class="jackpot-container">
+                    <div class="jackpot-main glass-effect">
+                        <div class="jackpot-timer" id="jackpot-timer">60</div>
+                        <div class="jackpot-display">
+                            <div class="jackpot-icon">🎰</div>
+                        </div>
+                        <div class="jackpot-stats">
+                            <div class="jp-stat">
+                                <span class="jp-label">Pot Value</span>
+                                <span class="jp-value" id="jp-pot">$0.00</span>
+                            </div>
+                            <div class="jp-stat">
+                                <span class="jp-label">Players</span>
+                                <span class="jp-value" id="jp-players">0</span>
+                            </div>
+                            <div class="jp-stat">
+                                <span class="jp-label">Your Chance</span>
+                                <span class="jp-value" id="jp-chance">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="jackpot-enter glass-effect">
+                        <h3>Enter Jackpot</h3>
+                        <input type="number" id="jp-bet-amount" placeholder="Enter amount" class="auth-input">
+                        <button class="btn btn-primary" onclick="enterJackpot()">Enter Jackpot</button>
+                        <div class="jackpot-players" id="jp-players-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coinflip Tab -->
+            <div id="tab-coinflip" class="tab-content">
+                <h1 class="page-title">Coinflip</h1>
+                <div class="coinflip-container glass-effect">
+                    <div class="coin" id="coin">
+                        <div class="coin-front">CT</div>
+                        <div class="coin-back">T</div>
+                    </div>
+                    <div class="coinflip-controls">
+                        <input type="number" id="flip-amount" placeholder="Bet amount" class="auth-input">
+                        <div class="flip-buttons">
+                            <button class="btn btn-ct" onclick="flipCoin('CT')">CT Side</button>
+                            <button class="btn btn-t" onclick="flipCoin('T')">T Side</button>
+                        </div>
+                        <p class="flip-info">Win Chance: 50% | Payout: 1.95x</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trade Tab -->
+            <div id="tab-trade" class="tab-content">
+                <h1 class="page-title">Trade Up Contract</h1>
+                <p class="page-subtitle">Trade 10 items of the same rarity for 1 item of higher rarity</p>
+                
+                <div class="trade-container">
+                    <div class="trade-input glass-effect">
+                        <h3>Select Items (0/10)</h3>
+                        <div class="trade-slots" id="trade-slots"></div>
+                        <button class="btn btn-primary" onclick="executeTradeUp()" id="trade-btn" disabled>Execute Trade Up</button>
+                    </div>
+                    <div class="trade-result glass-effect">
+                        <h3>Your Inventory</h3>
+                        <div class="trade-inventory" id="trade-inventory"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Tab -->
+            <div id="tab-achievements" class="tab-content">
+                <h1 class="page-title">Achievements</h1>
+                <div class="achievements-grid" id="achievements-grid"></div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div id="tab-leaderboard" class="tab-content">
+                <h1 class="page-title">Leaderboard</h1>
+                <div class="leaderboard-container glass-effect">
+                    <button class="btn btn-secondary" onclick="refreshLeaderboard()">Refresh</button>
+                    <div class="leaderboard-list" id="leaderboard-list"></div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="tab-settings" class="tab-content">
+                <h1 class="page-title">Settings</h1>
+                <div class="settings-container">
+                    <div class="setting-card glass-effect">
+                        <div class="setting-item">
+                            <span>Sound Effects</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-sound" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Animations</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-animations" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Auto-Save</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-autosave" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Particles</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="setting-particles" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-card glass-effect">
+                        <h3>Theme</h3>
+                        <div class="theme-grid">
+                            <button class="theme-btn active" data-theme="orange" onclick="changeTheme('orange')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #ff6b00, #ff8533);"></div>
+                                <span>Orange</span>
+                            </button>
+                            <button class="theme-btn" data-theme="blue" onclick="changeTheme('blue')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #2196f3, #42a5f5);"></div>
+                                <span>Blue</span>
+                            </button>
+                            <button class="theme-btn" data-theme="green" onclick="changeTheme('green')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #4caf50, #66bb6a);"></div>
+                                <span>Green</span>
+                            </button>
+                            <button class="theme-btn" data-theme="purple" onclick="changeTheme('purple')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #9c27b0, #ab47bc);"></div>
+                                <span>Purple</span>
+                            </button>
+                            <button class="theme-btn" data-theme="red" onclick="changeTheme('red')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #f44336, #ef5350);"></div>
+                                <span>Red</span>
+                            </button>
+                            <button class="theme-btn" data-theme="cyan" onclick="changeTheme('cyan')">
+                                <div class="theme-color" style="background: linear-gradient(135deg, #00bcd4, #26c6da);"></div>
+                                <span>Cyan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="setting-card glass-effect">
+                        <h3>Data Management</h3>
+                        <button class="btn btn-secondary" onclick="exportSave()">Export Save</button>
+                        <button class="btn btn-secondary" onclick="importSave()">Import Save</button>
+                        <button class="btn btn-danger" onclick="resetProgress()">Reset All Progress</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Case Opening Modal -->
+    <div id="case-opening-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeCaseModal()"></div>
+        <div class="modal-content case-modal glass-effect">
+            <button class="modal-close" onclick="closeCaseModal()">✕</button>
+            <div class="case-opening-animation">
+                <div class="reel-container">
+                    <div class="reel" id="case-reel"></div>
+                    <div class="reel-indicator"></div>
+                </div>
+            </div>
+            <div class="case-result hidden" id="case-result">
+                <div class="result-icon" id="result-icon">🔫</div>
+                <h2 id="result-name">Item Name</h2>
+                <p id="result-wear">Factory New</p>
+                <div class="result-rarity" id="result-rarity">Covert</div>
+                <div class="result-price" id="result-price">$0.00</div>
+                <button class="btn btn-primary" onclick="closeCaseModal()">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notifications"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
