@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Sports Manager v1.1.1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box" id="loginBox">
+            <div class="app-logo">
+                <div class="logo-icon">⚡</div>
+                <h1>Executive Sports Manager</h1>
+                <div class="version-badge">v1.1.1</div>
+            </div>
+            <p>Enter your credentials to continue</p>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="usernameInput" placeholder="Enter your username" autocomplete="username">
+            </div>
+            <button onclick="handleLogin()">Access Manager Portal</button>
+            <div class="login-footer">
+                <button class="secondary small" onclick="showCredits()">Credits</button>
+                <button class="secondary small" onclick="clearAllData()">Clear All Data</button>
+            </div>
+        </div>
+
+        <!-- Setup Screens -->
+        <div class="login-box hidden" id="sportSelect">
+            <div class="setup-progress">
+                <div class="progress-step active">1</div>
+                <div class="progress-line"></div>
+                <div class="progress-step">2</div>
+                <div class="progress-line"></div>
+                <div class="progress-step">3</div>
+                <div class="progress-line"></div>
+                <div class="progress-step">4</div>
+            </div>
+            <h1>Select Sport</h1>
+            <p>Choose your management discipline</p>
+            <div class="form-group">
+                <label>Sport</label>
+                <select id="sportInput">
+                    <option value="">Choose a sport...</option>
+                    <option value="soccer">⚽ Soccer</option>
+                    <option value="football">🏈 American Football</option>
+                    <option value="hockey">🏒 Hockey</option>
+                    <option value="baseball">⚾ Baseball</option>
+                    <option value="basketball">🏀 Basketball</option>
+                    <option value="tennis">🎾 Tennis</option>
+                    <option value="cricket">🏏 Cricket</option>
+                </select>
+            </div>
+            <button onclick="selectSport()">Continue</button>
+        </div>
+
+        <div class="login-box hidden" id="coachNameScreen">
+            <div class="setup-progress">
+                <div class="progress-step completed">✓</div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step active">2</div>
+                <div class="progress-line"></div>
+                <div class="progress-step">3</div>
+                <div class="progress-line"></div>
+                <div class="progress-step">4</div>
+            </div>
+            <h1>Manager Profile</h1>
+            <p>Set your professional identity</p>
+            <div class="form-group">
+                <label>Manager Name</label>
+                <input type="text" id="coachNameInput" placeholder="Enter your name" autocomplete="name">
+            </div>
+            <div class="form-group">
+                <label>Difficulty</label>
+                <select id="difficultyInput">
+                    <option value="easy">Easy - More budget, easier opponents</option>
+                    <option value="normal" selected>Normal - Balanced gameplay</option>
+                    <option value="hard">Hard - Limited budget, tough opponents</option>
+                    <option value="legendary">Legendary - Ultimate challenge</option>
+                </select>
+            </div>
+            <button onclick="setCoachName()">Continue</button>
+        </div>
+
+        <div class="login-box hidden" id="leagueSelect">
+            <div class="setup-progress">
+                <div class="progress-step completed">✓</div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step completed">✓</div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step active">3</div>
+                <div class="progress-line"></div>
+                <div class="progress-step">4</div>
+            </div>
+            <h1>Select League</h1>
+            <p>Choose your competition</p>
+            <div class="form-group">
+                <label>League</label>
+                <select id="leagueInput">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <button onclick="selectLeague()">Continue</button>
+        </div>
+
+        <div class="login-box hidden" id="teamSelect">
+            <div class="setup-progress">
+                <div class="progress-step completed">✓</div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step completed">✓</div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step completed">✓</div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step active">4</div>
+            </div>
+            <h1>Select Team</h1>
+            <p>Choose your organization</p>
+            <div class="form-group">
+                <label>Team</label>
+                <select id="teamInput">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <button onclick="selectTeam()">Start Management</button>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div class="game-container" id="gameContainer">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-info">
+                    <h2 id="teamName">Loading...</h2>
+                    <p><span id="coachName">Manager</span> • <span id="leagueName">League</span></p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Budget</div>
+                        <div class="stat-value" id="budgetDisplay">$0M</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Record</div>
+                        <div class="stat-value" id="recordDisplay">0-0-0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Season</div>
+                        <div class="stat-value" id="seasonDisplay">1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Day</div>
+                        <div class="stat-value" id="dayDisplay">1</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Toast -->
+            <div class="toast" id="toast"></div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Navigation -->
+                <div class="nav-panel">
+                    <button class="nav-button active" onclick="showPanel('team')">
+                        <span class="nav-icon">👥</span> Team
+                    </button>
+                    <button class="nav-button" onclick="showPanel('transfers')">
+                        <span class="nav-icon">💰</span> Transfers
+                    </button>
+                    <button class="nav-button" onclick="showPanel('facilities')">
+                        <span class="nav-icon">🏗️</span> Facilities
+                    </button>
+                    <button class="nav-button" onclick="showPanel('games')">
+                        <span class="nav-icon">📅</span> Games
+                    </button>
+                    <button class="nav-button" onclick="showPanel('schedule')">
+                        <span class="nav-icon">⏰</span> Schedule
+                    </button>
+                    <button class="nav-button" onclick="showPanel('finance')">
+                        <span class="nav-icon">💵</span> Finance
+                    </button>
+                    <button class="nav-button" onclick="showPanel('standings')">
+                        <span class="nav-icon">🏆</span> Standings
+                    </button>
+                    <button class="nav-button" onclick="showPanel('achievements')">
+                        <span class="nav-icon">⭐</span> Achievements
+                    </button>
+                    <button class="nav-button" onclick="showPanel('inbox')">
+                        <span class="nav-icon">📧</span> Inbox <span id="inboxBadge"></span>
+                    </button>
+                    <button class="nav-button secondary" onclick="showSettings()" style="margin-top: 20px;">
+                        <span class="nav-icon">⚙️</span> Settings
+                    </button>
+                    <button class="nav-button danger" onclick="saveAndExit()">
+                        <span class="nav-icon">💾</span> Save & Exit
+                    </button>
+                </div>
+
+                <!-- Content Area -->
+                <div>
+                    <!-- Team Panel -->
+                    <div class="content-panel active" id="teamPanel">
+                        <div class="panel-header">
+                            <h3>Team Roster</h3>
+                            <div class="panel-actions">
+                                <button class="small secondary" onclick="sortRoster('rating')">Sort by Rating</button>
+                                <button class="small secondary" onclick="sortRoster('position')">Sort by Position</button>
+                            </div>
+                        </div>
+                        <div class="team-summary">
+                            <div class="summary-stat">
+                                <div class="summary-label">Team Average</div>
+                                <div class="summary-value" id="teamAverage">0</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-label">Squad Size</div>
+                                <div class="summary-value" id="squadSize">0</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-label">Total Value</div>
+                                <div class="summary-value" id="totalValue">$0M</div>
+                            </div>
+                        </div>
+                        <div class="roster-grid" id="rosterGrid">
+                            <!-- Players populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Transfers Panel -->
+                    <div class="content-panel" id="transfersPanel">
+                        <div class="panel-header">
+                            <h3>Transfer Market</h3>
+                            <button class="small" onclick="refreshTransfers()">🔄 Refresh Market</button>
+                        </div>
+                        <div class="filters">
+                            <div class="form-group">
+                                <label>Position</label>
+                                <select id="positionFilter" onchange="filterTransfers()">
+                                    <option value="all">All Positions</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Max Price</label>
+                                <input type="number" id="maxPriceFilter" placeholder="Any" onchange="filterTransfers()">
+                            </div>
+                            <div class="form-group">
+                                <label>Min Rating</label>
+                                <input type="number" id="minRatingFilter" placeholder="Any" min="0" max="99" onchange="filterTransfers()">
+                            </div>
+                        </div>
+                        <div class="roster-grid" id="transferGrid">
+                            <!-- Transfer players populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Facilities Panel -->
+                    <div class="content-panel" id="facilitiesPanel">
+                        <div class="panel-header">
+                            <h3>Facilities</h3>
+                        </div>
+                        <div class="facilities-grid" id="facilitiesGrid">
+                            <!-- Facilities populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Games Panel -->
+                    <div class="content-panel" id="gamesPanel">
+                        <div class="panel-header">
+                            <h3>Match History</h3>
+                        </div>
+                        <div class="games-list" id="gamesList">
+                            <!-- Games populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Schedule Panel -->
+                    <div class="content-panel" id="schedulePanel">
+                        <div class="panel-header">
+                            <h3>Daily Schedule</h3>
+                        </div>
+                        <div class="schedule-actions">
+                            <div class="action-card" onclick="playNextGame()">
+                                <div class="action-icon">⚽</div>
+                                <div class="action-title">Play Game</div>
+                                <div class="action-desc">Simulate next match</div>
+                            </div>
+                            <div class="action-card" onclick="restTeam()">
+                                <div class="action-icon">🛌</div>
+                                <div class="action-title">Rest</div>
+                                <div class="action-desc">Recover team morale</div>
+                            </div>
+                            <div class="action-card" onclick="trainTeam()">
+                                <div class="action-icon">💪</div>
+                                <div class="action-title">Train</div>
+                                <div class="action-desc">Improve player skills</div>
+                            </div>
+                            <div class="action-card" onclick="advanceTime()">
+                                <div class="action-icon">⏩</div>
+                                <div class="action-title">Advance Time</div>
+                                <div class="action-desc">Skip to next day</div>
+                            </div>
+                        </div>
+                        <div class="panel-header" style="margin-top: 30px;">
+                            <h3>Upcoming Fixtures</h3>
+                        </div>
+                        <div class="games-list" id="scheduleGamesList">
+                            <!-- Next 5 games -->
+                        </div>
+                    </div>
+
+                    <!-- Finance Panel -->
+                    <div class="content-panel" id="financePanel">
+                        <div class="panel-header">
+                            <h3>Financial Overview</h3>
+                        </div>
+                        <div class="finance-summary">
+                            <div class="finance-card">
+                                <div class="finance-label">Current Budget</div>
+                                <div class="finance-amount" id="financeCurrentBudget">$0M</div>
+                            </div>
+                            <div class="finance-card">
+                                <div class="finance-label">Total Spent</div>
+                                <div class="finance-amount" id="financeTotalSpent" style="color: var(--danger);">$0M</div>
+                            </div>
+                            <div class="finance-card">
+                                <div class="finance-label">Total Income</div>
+                                <div class="finance-amount" id="financeTotalIncome" style="color: var(--success);">$0M</div>
+                            </div>
+                        </div>
+                        <div class="panel-header">
+                            <h3>Recent Transactions</h3>
+                        </div>
+                        <div class="transactions-list" id="transactionsList">
+                            <!-- Transactions populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Standings Panel -->
+                    <div class="content-panel" id="standingsPanel">
+                        <div class="panel-header">
+                            <h3>League Standings</h3>
+                        </div>
+                        <div class="standings-table" id="standingsTable">
+                            <!-- Standings populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Achievements Panel -->
+                    <div class="content-panel" id="achievementsPanel">
+                        <div class="panel-header">
+                            <h3>Achievements</h3>
+                            <div class="achievement-progress">
+                                <span id="achievementCount">0</span> / <span id="achievementTotal">0</span> Unlocked
+                            </div>
+                        </div>
+                        <div class="achievements-grid" id="achievementsGrid">
+                            <!-- Achievements populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Inbox Panel -->
+                    <div class="content-panel" id="inboxPanel">
+                        <div class="panel-header">
+                            <h3>Messages</h3>
+                            <button class="small secondary" onclick="markAllRead()">Mark All Read</button>
+                        </div>
+                        <div class="inbox-list" id="inboxList">
+                            <!-- Messages populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Player Details -->
+    <div class="modal" id="playerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalPlayerName">Player Name</h3>
+                <button class="close-modal" onclick="closeModal()">Close</button>
+            </div>
+            <div id="modalPlayerContent">
+                <!-- Player details populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Settings</h3>
+                <button class="close-modal" onclick="closeSettingsModal()">Close</button>
+            </div>
+            <div class="settings-content">
+                <div class="form-group">
+                    <label>Auto-Save</label>
+                    <select id="autosaveSetting" onchange="updateSettings()">
+                        <option value="true">Enabled</option>
+                        <option value="false">Disabled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notifications</label>
+                    <select id="notificationsSetting" onchange="updateSettings()">
+                        <option value="true">Enabled</option>
+                        <option value="false">Disabled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Theme</label>
+                    <select id="themeSetting" onchange="updateSettings()">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light (Coming Soon)</option>
+                    </select>
+                </div>
+                <button class="danger" onclick="confirmReset()" style="margin-top: 20px;">Reset Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credits Modal -->
+    <div class="modal" id="creditsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Credits</h3>
+                <button class="close-modal" onclick="closeCreditsModal()">Close</button>
+            </div>
+            <div class="credits-content">
+                <h4>Executive Sports Manager v1.1.1</h4>
+                <p>A comprehensive sports management simulation game</p>
+                <br>
+                <p><strong>New in v1.1.1:</strong></p>
+                <ul>
+                    <li>Added Basketball, Tennis, and Cricket</li>
+                    <li>League standings system</li>
+                    <li>Achievement system with 25+ achievements</li>
+                    <li>Improved UI with better animations</li>
+                    <li>Enhanced transfer market with filters</li>
+                    <li>Season progression system</li>
+                    <li>Difficulty settings</li>
+                    <li>Better player statistics</li>
+                    <li>Team morale and chemistry</li>
+                    <li>Injury system</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
